@@ -126,17 +126,20 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
     print('_'*73,'\n')
 
-#input = assembly( format( changeBase( format( input("Enter decimal number to be converted to pent: ") ),10,5) ),5 )
-#input = assembly( format( changeBase( format( '23424523.4564' ),10,5) ),5 )
-input = assembly(format(input('Enter number in quinary: ')),5)
-#input = assembly(format('12344334342'),5)
-#print(input)
 
-window = pygame.display.set_mode()
-#interpret(window,input)
-interpret(window,input)
-#interpret(window,'#5@2(@1|1.1-2.1)|2.1-4.1|4.1-0.1$')
-#print(assembly( format( changeBase( format( "15.6" ),10,5) ),5 ))
+def Pent(text, folder = './'):
+    
+    input = assembly( format( changeBase( format( text ),10,5) ),5 )
 
-pygame.display.flip()
-mainloop()
+
+    window = pygame.display.set_mode()
+
+    interpret(window,input)
+
+    pygame.display.flip()
+    pygame.image.save(window,f'{folder}pent-{text}.png')
+
+if __name__ == '__main__':
+    text = input('Enter number in decimal to be converted to pent: ')
+    Pent(text)
+    mainloop()
