@@ -72,13 +72,13 @@ def drawLine(num1,num2,z1,z2,z,screen,sides=int(5),drawBool=True,originMod=[[0,0
         px.append(math.sin(2*math.pi/sides*i))
         py.append(math.cos(2*math.pi/sides*i))
 
-    if originMod == [0,0]:
-        originMod = [pygame.display.get_window_size()[0]/2,pygame.display.get_window_size()[1]/2]
+    if originMod[0] == [0,0]:
+        originMod[0] = [pygame.display.get_window_size()[0]/2,pygame.display.get_window_size()[1]/2]
     
     point1 = [px[num1]*z1+originMod[0][0], -1*py[num1]*z1+originMod[0][1]] # creates tuples by grabbing coordinates from the right list for points 1 and 2. z1 & z2 are scale factors
     point2 = [px[num2]*z2+originMod[0][0], -1*py[num2]*z2+originMod[0][1]]
     if drawBool:
-        pygame.draw.line(screen,[255,255,255],point1,point2,4)
+        pygame.draw.line(screen,[255,255,255],point1,point2,2)
     else:
 
         if (point1[0]-point2[0]) == 0:
@@ -105,7 +105,10 @@ def drawLineMods(screen,que=str(),line=[0,0,0,0,0,0,0]):
         scale = screenDimension() * 0.4
     else:
         scale = line[6]
-    orthom = -1 * m**-1
+    if m != 0:
+        orthom = -1 * m**-1
+    else:
+        orthom = 230
     step = 1
     arrowLength = scale/15
     arrowWidth = scale/15
@@ -131,8 +134,29 @@ def drawLineMods(screen,que=str(),line=[0,0,0,0,0,0,0]):
         pygame.draw.line(screen,[255,255,255],[px,py],[rx,ry],2)
         pygame.draw.line(screen,[255,255,255],[px,py],[lx,ly],2)
 
-#window = pygame.display.set_mode()
-#pygame.display.flip()
+def drawCircMods(screen,que=str(),originMod=[[0,0],0],refslope = 0.0):
+    radius = originMod[1]
+    x_circ = originMod[0][0]
+    y_circ = originMod[0][1]
+    n_tot = len(que)
+
+    if refslope == 0 and originMod[0][0] != pygame.display.get_window_size()[0]/2:
+        refslope = (originMod[0][1]-pygame.display.get_window_size()[1]/2)/(originMod[0][0]-pygame.display.get_window_size()[0]/2)
+    elif originMod[0][0] == pygame.display.get_window_size()[0]/2:
+        refslope = 230
+
+    #refslope = (y_circ-pygame.display.get_window_size()[1]/2)/(x_circ-pygame.display.get_window_size()[0]/2)
+    
+    for n in range(1,len(que)+1):
+        flip = 0
+        if originMod[0][0] > pygame.display.get_window_size()[0]/2:
+            flip = math.pi
+        px1 = (2*radius/3) * math.cos(math.atan(refslope)+n*math.pi/(n_tot+11)+flip)+x_circ
+        py1 = (2*radius/3) * math.sin(math.atan(refslope)+n*math.pi/(n_tot+11)+flip)+y_circ
+        px2 = (4*radius/3) * math.cos(math.atan(refslope)+n*math.pi/(n_tot+11)+flip)+x_circ
+        py2 = (4*radius/3) * math.sin(math.atan(refslope)+n*math.pi/(n_tot+11)+flip)+y_circ
+        pygame.draw.line(screen,[255,255,255],[px1,py1],[px2,py2],2)
+    
 
 def mainloop():
     run = True
@@ -143,3 +167,16 @@ def mainloop():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: # if an event is a keypress and escape key stop the program, just escape key throws error bc not all events are keys
                 run = False
                 break
+
+if __name__ == '__main__':
+    pygame.display.init()
+    window = pygame.display.set_mode()
+    referencePoly(window,8)
+
+    drawCircle(2,window,8)
+
+    drawLine(2,4,1,1,1,window,8,True)
+    drawCircMods(window,'++++',drawCircle(2,window,8,False),drawLine(2,4,1,1,1,window,8,False)[0])
+
+    pygame.display.flip()
+    mainloop()

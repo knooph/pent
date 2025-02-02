@@ -2,8 +2,6 @@ from assembleinstrucV1_1 import *
 from formatInput import *
 from drawPentV2_1 import *
 import pygame
-from os import system
-system('cls')
 
 def isMarker(char = str()):
     if char == '#':
@@ -38,12 +36,14 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
     temp = list([]) # I like doing this so I can create and destroy temporary variables as I like
     base = int(2) # Default the base to 2 because 1 is impossible
-    tot_layer = int(1)
+    tot_layer = int(0)
     layer = int(1)
     skip = 0
+    prevCirc = list()
+    prevLine = list()
     for index in range(len(input)): # iterates the index trhough the length of the string
         if not skip > 0:
-            print('index:{} char:{}'.format(index,input[index]))
+            print('index:{} char:{}'.format(index,input[index]),end='')
 
         if skip > 0:
             skip -= 1
@@ -55,12 +55,15 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 index += 1
                 skip += 1
                 base = int(str(base) + input[index])
+                print(f'\tbase set to {base}')
             referencePoly(screen,base,originMod)
-        elif input[index] == '%':
+
+        elif input[index] == '%': #Records the total layers for later
             while not isMarker(input[index+1]):
                 index += 1
                 skip += 1
                 tot_layer = int(str(tot_layer) + str(input[index]))
+                print(f'\tlayers recorded, {tot_layer}')
             
         elif input[index] == '@':   #If cursor on circle marker
             temp.append(int(0))
@@ -72,6 +75,9 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 temp[0] = int(str(temp[0]) + input[index])
 
             drawCircle(temp[0],screen,base,True,originMod) #draws the origin circle
+            prevCirc = drawCircle(temp[0],screen,base,False,originMod) # saves the output of this circle for circle modifiers
+
+            print(f'\tdrawing circle at {temp[0]}')
 
             if input[index+1] == '(':       # If there is a decimal in the circle
                 temp[1] = str(input[(index+2):(input.find(')'))])+'$' #Get the slice of the input that's just the decimal to pass back to the interpreter
@@ -85,14 +91,25 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
             temp = list([]) # destroy temporary values
         
         elif input[index] == '|':
+            temp.append('') # creates temporary variable num1
+            temp.append('') # creates temporary variable num2
+            temp.append(0) # creates temporary variable starting layer
+            temp.append('') # creates temporary variablefor line mods
 
             if input[index+1] == '^': #Check or indentation
                 layer += 1
+                temp[2] = layer
                 index += 1
                 skip += 1
 
-            temp.append('') # creates temporary variable num1
-            temp.append('') # creates temporary variable num2
+            elif input[index+1] == '/':
+                index += 1
+                skip += 1
+                temp[2] = int(layer)                
+                layer += 1
+
+            else:
+                temp[2] = layer
 
             while not isMarker(input[index+1]): # Everything read up to the next marker will be the starting digit
                 index += 1
@@ -100,21 +117,36 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 temp[0] = int(str(temp[0]) + str(input[index]))
             index += 1
             skip += 1
+
             while not isMarker(input[index+1]): # Everything read up to the next marker will be the ending digit
                 index += 1
                 skip += 1
                 temp[1] = int(str(temp[1]) + str(input[index]))
-            drawLine(temp[0],temp[1],layer,layer,tot_layer,screen,base,True,originMod)
+            
+            drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,True,originMod)
+            print(f'\tdrawing line from {temp[0]} to {temp[1]}')
 
             if input[index+1] == '+' or input[index+1] == '<':
-                temp.append('') # creates temporary variablefor line mods
-                while not (input[index+1] == '+' or input[index+1] == '<'):
+                while input[index+1] == '+' or  input[index+1] == '<':
                     index += 1
                     skip += 1
-                    temp[2] = str(temp[2]) + input[index]
-                print('Line Modifiers:',temp[2])
-                drawLineMods(screen,temp[2],drawLine(temp[0],temp[1],layer,layer,tot_layer,screen,base,False,originMod))
-            temp = list()
+                    temp[3] = str(temp[3]) + str(input[index])
+                print('Line Modifiers:',temp[3])
+                drawLineMods(screen,temp[3],drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,False,originMod))
+            prevLine = drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,False,originMod)
+            temp = list([])
+
+        elif input[index] == '+': # This only handles + signs on circles
+            temp.append('')
+            temp[0] += '+'
+            while input[index+1] == '+':
+                index += 1
+                skip += 1
+                temp[0] += '+'
+            drawCircMods(screen,temp[0],prevCirc,prevLine[0])
+            print(f'\tdrawing circ mods {temp[0]}')
+            temp = list([])
+
         elif input[index] == '*': # pass over dummy character
             pass
 
@@ -126,20 +158,20 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
     print('_'*73,'\n')
 
-
 def Pent(text, folder = './'):
     
     input = assembly( format( changeBase( format( text ),10,5) ),5 )
 
-
     window = pygame.display.set_mode()
-
+    
     interpret(window,input)
 
     pygame.display.flip()
     pygame.image.save(window,f'{folder}pent-{text}.png')
 
 if __name__ == '__main__':
+    from os import system
+    system('cls')
     text = input('Enter number in decimal to be converted to pent: ')
     Pent(text)
     mainloop()

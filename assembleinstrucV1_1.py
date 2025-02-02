@@ -11,21 +11,25 @@ def assembly(list,base = int(5),isDec = False):
     previous = int(-1)
     layerFill = []
     decindex = int()
+    tot_layer = 1
+    store = str('')
 
     for i in range(base):
         layerFill.append(0)
 
     for index in range(len(list)):
         #print('\nDigit:{},(index {})\nCurrent:{}\nPrevious:{}'.format(list[index],index,current,previous))
-        if index == 0:                      # If the first digit, draw a circle
-            circ = False
-            out += '@{}'.format(list[0])
-            decindex = len(out)
+        if index == 0:                      # If the first digit, set pending circle to true so it can be drawn later. This is so the interpreter draws the circle on top of the line
+            pendingCirc = True
+            store += '@{}'.format(list[0])
             current = list[index]
             layerFill[int(list[index])] = 1
 
         elif list[index] == current:        # If the current number is the same as the index, draw a dash
-            out += '+'
+            if pendingCirc:
+                store += '+'
+            else:
+                out += '+'
             indent = False
 
         elif list[index] == previous:       # If the previous number is the same as the index, draw an arrow
@@ -39,16 +43,36 @@ def assembly(list,base = int(5),isDec = False):
         elif list[index] != current and list[index] != previous and type(list[index]) == int: # Otherwise draw a line
             
             if indent:                     # if drawing a line and indenting, 
-                indent = False
-                layerFill = clearList(layerFill)
-                layerFill[int(previous)] += 1
+                indent = False        
+                layerFill = clearList(layerFill) #clear the list that keeps track of layers
+                layerFill[int(previous)] += 1    #add 1 layer the start and end position of line
+                layerFill[int(list[index])] += 1
+                tot_layer += 1                   #updates layer count
                 current = list[index]
                 out += '|^{}-{}'.format(previous,current)
+
+            elif layerFill[int(list[index])] >= 1:
+                previous = current
+                current = list[index]
+                layerFill = clearList(layerFill)
+                layerFill[int(current)] += 1
+                tot_layer += 1
+                out += '|/{}-{}'.format(previous,current)
+            
             else:
                 previous = current
                 current = list[index]
+                layerFill[int(current)] += 1
                 out += '|{}-{}'.format(previous,current)
+
+            if pendingCirc and index != 0: #adds the circle
+                pendingCirc = False
+                out += store
+                decindex = len(out)
             
+    
+    out = out[:len(str(base))+1] + f'%{tot_layer}' + out[len(str(base))+1:]
+
     if isDec:
         return out
     else:
@@ -57,12 +81,6 @@ def assembly(list,base = int(5),isDec = False):
 if __name__ == '__main__':
     from os import system
     system('cls')
-    input = input('Enter number in quinary: ')
-    print(format(input))
-    print(assembly(format(input),5))
-
-
-#input: 1 , 2 , 4, 2 , 3, . , 0 , 0 , 3
-#action c   l   l  <   l  .   c   +   l
-#prev  -1   1   2  2   4  -  -1  -1   0
-#curren 1   2   4  4   3  -   0   0   3
+    #input = changeBase(format(input('Enter number in decimal: ')),10,5)
+    input = input('Enter number in decimal: ')
+    print(assembly( format( changeBase( format(input),10,5) ),5 ))
