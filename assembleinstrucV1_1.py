@@ -42,6 +42,11 @@ def assembly(list,base = int(5),isDec = False):
 
         elif list[index] != current and list[index] != previous and type(list[index]) == int: # Otherwise draw a line
             
+            if pendingCirc and len(out) > (len(str(base))+len(str(tot_layer))+2): #adds the circle
+                pendingCirc = False
+                out += store
+                decindex = len(out)
+
             if indent:                     # if drawing a line and indenting, 
                 indent = False        
                 layerFill = clearList(layerFill) #clear the list that keeps track of layers
@@ -64,11 +69,6 @@ def assembly(list,base = int(5),isDec = False):
                 current = list[index]
                 layerFill[int(current)] += 1
                 out += '|{}-{}'.format(previous,current)
-
-            if pendingCirc and index != 0: #adds the circle
-                pendingCirc = False
-                out += store
-                decindex = len(out)
             
     
     out = out[:len(str(base))+1] + f'%{tot_layer}' + out[len(str(base))+1:]
