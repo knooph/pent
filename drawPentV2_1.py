@@ -158,10 +158,10 @@ def drawCircMods(screen,que=str(),originMod=[[0,0],0],refslope = 0.0):
         pygame.draw.line(screen,[255,255,255],[px1,py1],[px2,py2],2)
     
 
-def mainloop():
+def mainloop(dt=0.01):
     run = True
     while run:
-        time.sleep(0.01)
+        time.sleep(dt)
         events = pygame.event.get() # writes the event que to a list
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: # if an event is a keypress and escape key stop the program, just escape key throws error bc not all events are keys

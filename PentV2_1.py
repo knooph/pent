@@ -146,7 +146,10 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 index += 1
                 skip += 1
                 temp[0] += '+'
-            drawCircMods(screen,temp[0],prevCirc,prevLine[0])
+            if prevLine != []:
+                drawCircMods(screen,temp[0],prevCirc,prevLine[0])
+            else:
+                drawCircMods(screen,temp[0],prevCirc)
             print(f'\tdrawing circ mods {temp[0]}')
             temp = list([])
 
@@ -178,4 +181,4 @@ if __name__ == '__main__':
     system('cls')
     text = input('Enter number in decimal to be converted to pent: ')
     Pent(text)
-    mainloop()
+    mainloop(1)
