@@ -10,18 +10,17 @@ def assembly(list,base = int(5),isDec = False):
     current = int(-1)
     previous = int(-1)
     layerFill = []
-    decindex = int()
     tot_layer = 1
     store = str('')
-
+    pendingCirc = False
     for i in range(base):
         layerFill.append(0)
 
     for index in range(len(list)):
-        #print('\nDigit:{},(index {})\nCurrent:{}\nPrevious:{}'.format(list[index],index,current,previous))
+
         if index == 0:                      # If the first digit, set pending circle to true so it can be drawn later. This is so the interpreter draws the circle on top of the line
             pendingCirc = True
-            store += '@{}'.format(list[0])
+            store += f'@{list[0]}'
             current = list[index]
             layerFill[int(list[index])] = 1
 
@@ -31,21 +30,20 @@ def assembly(list,base = int(5),isDec = False):
             else:
                 out += '+'
             indent = False
-
+            
         elif list[index] == previous:       # If the previous number is the same as the index, draw an arrow
             out += '<'
             indent = True
 
-        elif list[index] == '.':            # Passes the rest of the list to a new assebly method and inserts that at decindex
-            out = out[:decindex] + '(' + assembly(list[index+1:],base,True) + ')' + out[decindex:]
+        elif list[index] == '.':            # Passes the rest of the list to a new assebly method
+            store = store[:len(str(list[0]))+1] + '(' + assembly(list[index+1:],base,True) + ')' + store[len(str(list[0]))+1:]
             break
 
         elif list[index] != current and list[index] != previous and type(list[index]) == int: # Otherwise draw a line
             
-            if pendingCirc and len(out) > (len(str(base))+len(str(tot_layer))+2): #adds the circle
+            if pendingCirc and len(out) > (len(str(base))+len(str(tot_layer))+2): #adds a placeholder character * to be replaced later
                 pendingCirc = False
-                out += store
-                decindex = len(out)
+                out += '*'
 
             if indent:                     # if drawing a line and indenting, 
                 indent = False        
@@ -70,7 +68,11 @@ def assembly(list,base = int(5),isDec = False):
                 layerFill[int(current)] += 1
                 out += '|{}-{}'.format(previous,current)
             
-    
+    if out.find('*') == -1 and pendingCirc: #if there is no placeholder and there is a circle pending, add it to the end of out
+        out += store
+    elif out.find('*') >= 0:    # if there is a placeholder, replace it
+        out = out.replace('*',store)
+
     out = out[:len(str(base))+1] + f'%{tot_layer}' + out[len(str(base))+1:]
 
     if isDec:
@@ -83,4 +85,5 @@ if __name__ == '__main__':
     system('cls')
     #input = changeBase(format(input('Enter number in decimal: ')),10,5)
     input = input('Enter number in decimal: ')
+    print(format( changeBase( format(input),10,5)))
     print(assembly( format( changeBase( format(input),10,5) ),5 ))

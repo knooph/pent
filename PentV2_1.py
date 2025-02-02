@@ -30,7 +30,8 @@ def isMarker(char = str()):
         return True
 
 def interpret(screen,input = str(),originMod = [[0,0],0]):
-    print('\nInterpreter:{}'.format(input),'_'*(60-len(input)))
+    
+    print(f'\nInterpreter:{input}','_'*(60-len(input)))
     if originMod == [0,0,0]:
         originMod = [pygame.display.get_window_size()[0]/2,pygame.display.get_window_size()[1]/2]
 
@@ -86,7 +87,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
             interpret(screen,temp[0],prevCirc)
 
-            skip += (len(temp[0])+2) # skip to the end of the dcimal section
+            skip += (len(temp[0])+1) # skip to the end of the dcimal section
             input =  input[:input.find('(')] + '*'*(len(temp[0])+2) + input[input.find(')')+1:] # replace the decimal section with *'s to pass over so it doesn't interfere with future string searches
             print(input,'<<<<modified-string')
 
@@ -165,7 +166,8 @@ def Pent(text, folder = './'):
     input = assembly( format( changeBase( format( text ),10,5) ),5 )
 
     window = pygame.display.set_mode()
-    
+
+    print(f'quinary:{changeBase( format( text ),10,5)}')
     interpret(window,input)
 
     pygame.display.flip()
