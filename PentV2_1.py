@@ -67,7 +67,6 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
             
         elif input[index] == '@':   #If cursor on circle marker
             temp.append(int(0))
-            temp.append(int(1)) # set up two temporary variables
 
             while not isMarker(input[index+1]): # All digits up to a marker being read as the circle position on polygon
                 index += 1
@@ -79,14 +78,17 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
             print(f'\tdrawing circle at {temp[0]}')
 
-            if input[index+1] == '(':       # If there is a decimal in the circle
-                temp[1] = str(input[(index+2):(input.find(')'))])+'$' #Get the slice of the input that's just the decimal to pass back to the interpreter
+            temp = list([]) # destroy temporary values
 
-                interpret(screen,temp[1],drawCircle(temp[0],screen,base,False))
+        elif input[index] == '(':       # If there is a decimal in the circle
+            temp.append(int(0))
+            temp[0] = str(input[(index+1):(input.find(')'))])+'$' #Get the slice of the input that's just the decimal to pass back to the interpreter
 
-                skip += (len(temp[1])+2) # skip to the end of the dcimal section
-                input =  input[:input.find('(')] + '*'*(len(temp[1])+2) + input[input.find(')')+1:] # replace the decimal section with *'s to pass over so it doesn't interfere with future string searches
-                print(input,'<<<<modified-string')
+            interpret(screen,temp[0],prevCirc)
+
+            skip += (len(temp[0])+2) # skip to the end of the dcimal section
+            input =  input[:input.find('(')] + '*'*(len(temp[0])+2) + input[input.find(')')+1:] # replace the decimal section with *'s to pass over so it doesn't interfere with future string searches
+            print(input,'<<<<modified-string')
 
             temp = list([]) # destroy temporary values
         
