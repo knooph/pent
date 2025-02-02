@@ -28,8 +28,8 @@ def referencePoly(screen,sides=int(5),originMod = [[0,0],0]):
     for p in range(0,sides-1):
         point1 = [px[p]*scale+originMod[0][0], -1*py[p]*scale+originMod[0][1]] # creates tuples by grabbing coordinates from the right list for points 1 and 2. z1 & z2 are scale factors
         point2 = [px[p+1]*scale+originMod[0][0], -1*py[p+1]*scale+originMod[0][1]]
-        pygame.draw.line(screen,[100,100,100],point1,point2,2)
-    pygame.draw.line(screen,[100,100,100],[px[0]*scale+originMod[0][0], -1*py[0]*scale+originMod[0][1]],[px[sides-1]*scale+originMod[0][0], -1*py[sides-1]*scale+originMod[0][1]],2)
+        pygame.draw.line(screen,[100,100,100],point1,point2,1)
+    pygame.draw.line(screen,[100,100,100],[px[0]*scale+originMod[0][0], -1*py[0]*scale+originMod[0][1]],[px[sides-1]*scale+originMod[0][0], -1*py[sides-1]*scale+originMod[0][1]],1)
 
 def drawCircle(center,screen,sides=5,drawBool=True,originMod=[[0,0],0]):
     px=[]
