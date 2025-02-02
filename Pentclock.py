@@ -4,16 +4,14 @@ import pygame
 import time
 
 def countLoop(dt=1,base=5,limit=None,screen=pygame.display.set_mode()):
-    x = 0
     run = True
     while run:
-        if ( x != limit ):
-            x += 1
+        x = time.time()
         
         screen.fill([0,0,0])
         PentV2_1.interpret(screen,PentV2_1.assembly( formatInput.format( formatInput.changeBase( formatInput.format( str(x) ),10,base) ),base ))
         pygame.display.flip()
-        time.sleep(dt)
+        time.sleep(1/base)
 
         events = pygame.event.get() # writes the event que to a list
         for event in events:
@@ -21,4 +19,4 @@ def countLoop(dt=1,base=5,limit=None,screen=pygame.display.set_mode()):
                 run = False
                 break
 
-countLoop(dt=1/30,base=30)
+countLoop(base=60)

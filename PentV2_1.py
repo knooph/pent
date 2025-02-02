@@ -31,7 +31,7 @@ def isMarker(char = str()):
 
 def interpret(screen,input = str(),originMod = [[0,0],0]):
     
-    print(f'\nInterpreter:{input}','_'*(60-len(input)))
+    #print(f'\nInterpreter:{input}','_'*(60-len(input)))
     if originMod == [0,0,0]:
         originMod = [pygame.display.get_window_size()[0]/2,pygame.display.get_window_size()[1]/2]
 
@@ -43,8 +43,8 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
     prevCirc = list()
     prevLine = list()
     for index in range(len(input)): # iterates the index trhough the length of the string
-        if not skip > 0:
-            print('index:{} char:{}'.format(index,input[index]),end='')
+        #if not skip > 0:
+            #print('index:{} char:{}'.format(index,input[index]),end='')
 
         if skip > 0:
             skip -= 1
@@ -56,7 +56,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 index += 1
                 skip += 1
                 base = int(str(base) + input[index])
-                print(f'\tbase set to {base}')
+                #print(f'\tbase set to {base}')
             referencePoly(screen,base,originMod)
 
         elif input[index] == '%': #Records the total layers for later
@@ -64,7 +64,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 index += 1
                 skip += 1
                 tot_layer = int(str(tot_layer) + str(input[index]))
-                print(f'\tlayers recorded, {tot_layer}')
+                #print(f'\tlayers recorded, {tot_layer}')
             
         elif input[index] == '@':   #If cursor on circle marker
             temp.append(int(0))
@@ -77,7 +77,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
             drawCircle(temp[0],screen,base,True,originMod) #draws the origin circle
             prevCirc = drawCircle(temp[0],screen,base,False,originMod) # saves the output of this circle for circle modifiers
 
-            print(f'\tdrawing circle at {temp[0]}')
+            #print(f'\tdrawing circle at {temp[0]}')
 
             temp = list([]) # destroy temporary values
 
@@ -89,7 +89,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
 
             skip += (len(temp[0])+1) # skip to the end of the dcimal section
             input =  input[:input.find('(')] + '*'*(len(temp[0])+2) + input[input.find(')')+1:] # replace the decimal section with *'s to pass over so it doesn't interfere with future string searches
-            print(input,'<<<<modified-string')
+            #print(input,'<<<<modified-string')
 
             temp = list([]) # destroy temporary values
         
@@ -127,14 +127,14 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 temp[1] = int(str(temp[1]) + str(input[index]))
             
             drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,True,originMod)
-            print(f'\tdrawing line from {temp[0]} to {temp[1]}')
+            #print(f'\tdrawing line from {temp[0]} to {temp[1]}')
 
             if input[index+1] == '+' or input[index+1] == '<':
                 while input[index+1] == '+' or  input[index+1] == '<':
                     index += 1
                     skip += 1
                     temp[3] = str(temp[3]) + str(input[index])
-                print('Line Modifiers:',temp[3])
+                #print('Line Modifiers:',temp[3])
                 drawLineMods(screen,temp[3],drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,False,originMod))
             prevLine = drawLine(temp[0],temp[1],temp[2],layer,tot_layer,screen,base,False,originMod)
             temp = list([])
@@ -150,7 +150,7 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
                 drawCircMods(screen,temp[0],prevCirc,prevLine[0])
             else:
                 drawCircMods(screen,temp[0],prevCirc)
-            print(f'\tdrawing circ mods {temp[0]}')
+            #print(f'\tdrawing circ mods {temp[0]}')
             temp = list([])
 
         elif input[index] == '*': # pass over dummy character
@@ -159,10 +159,10 @@ def interpret(screen,input = str(),originMod = [[0,0],0]):
         elif input[index] == '$': # Denotes end of the string
             break
 
-        else:
-            print('could not identify',input[index])
+        #else:
+            #print('could not identify',input[index])
 
-    print('_'*73,'\n')
+    #print('_'*73,'\n')
 
 def Pent(text, folder = './'):
     
