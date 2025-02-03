@@ -19,4 +19,4 @@ def countLoop(dt=1,base=5,limit=None,screen=pygame.display.set_mode()):
                 run = False
                 break
 
-countLoop(base=60)
+countLoop(base=5)
